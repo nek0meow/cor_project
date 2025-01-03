@@ -40,12 +40,12 @@ class Orders(models.Model):
 
 class OrderItem(models.Model):
     quantity = models.FloatField()
-    product = models.ForeignKey(Product)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     orders = models.ForeignKey(Orders, on_delete=models.CASCADE)
 
 
 class Payment(models.Model):
     payment_date = models.DateTimeField()
     amount = models.FloatField()
-    payment_method = models.CharField(32)
+    payment_method = models.CharField(max_length=32)
     orders = models.ForeignKey(Orders, on_delete=models.CASCADE)
