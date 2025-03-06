@@ -1,10 +1,21 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
+
+<html>
+    <head>
+        <title>cor project</title>
+    </head>
+    <body>
+    <h1><a href="{% url 'main' %}">Time Tracker</a></h1>
+        <nav>
+            <a href="{% url 'main' %}">Главная</a>
+            {% if user.is_anonymous %}
+                <a href="{% url 'registration' %}">Регистрация</a>
+                <a href="{% url 'auth' %}">Авторизация</a>
+            {% else %}
+                <a href="{% url 'logout' %}">Выйти</a>
+            {% endif %}
+        </nav>
+        <hr>
+        {% block content %} {% endblock %}
+    </body>
 </html>

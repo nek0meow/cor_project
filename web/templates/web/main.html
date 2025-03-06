@@ -1,14 +1,8 @@
-<!DOCTYPE html>
-
-<html>
-    <head>
-        <title>cor project</title>
-    </head>
-    <body>
-        {% if not user.is_anonymous %}
-            <p>Вы авторизованы как <b>{{ user.username }}</b></p>
-        {% endif %}
+{% extends 'web/base.html' %}
+{% block content %}
+    {% if not user.is_anonymous %}
+        <p>Вы авторизованы как <b>{{ user.username }}</b></p>
+    {% endif %}
         <div>hello world</div>
-        {{ year }}
-    </body>
-</html>
+    {{ year }}
+{% endblock %}
