@@ -1,0 +1,10 @@
+{% extends 'web/base.html' %}
+{% block content %}
+    <h2>{% if is_edit %}Изменить продукт{% else %}Добавить продукт{% endif %}</h2>
+    <form action="" method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button>{% if is_edit %}Изменить{% else %}Добавить{% endif %}</button>
+    </form>
+    <a href="{% url 'product_list' %}">Назад к списку продуктов</a>
+{% endblock %}
