@@ -1,0 +1,23 @@
+{% extends 'web/base.html' %}
+{% block content %}
+    <p>Заказы покупателя {{customer.customer_name}}: </p>
+    {% for order_data in orders_with_products %}
+        <div>
+            <h3>Заказ #{{ order_data.order.id }} ({{ order_data.order.order_date }})
+                <small>
+                <a href="{% url 'order_item_add' order_data.order.id %}">Добавить продукт</a>
+                <a href="{% url 'order_delete' order_data.order.id %}">Отменить</a>
+                </small>
+            </h3>
+            <ul>
+                {% for item in order_data.products %}
+                    <li>
+                        {{ item.product.product_name }} - {{ item.quantity }} шт. ({{ item.product.product_price }} руб. за шт.)
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endfor %}
+
+    <p><a href="{% url 'order_add' customer.id %}">Добавить заказ</a></p>
+{% endblock %}

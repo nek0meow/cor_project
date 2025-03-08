@@ -1,8 +1,12 @@
 {% extends 'web/base.html' %}
 {% block content %}
     {% if not user.is_anonymous %}
-        <p>Вы авторизованы как <b>{{ user.username }}</b></p>
+        {% for customer in customers %}
+            <p><b>{{customer.customer_name}}</b> <small>{{customer.customer_email}}, {{customer.customer_phone}}, {{customer.customer_address}}</small>
+                <a href="{% url 'customer_orders' customer.id %}">Заказы</a>
+                <a href="{% url 'customer_edit' customer.id %}">Изменить</a>
+                <a href="{% url 'customer_delete' customer.id %}">Удалить</a>
+            </p>
+        {% endfor %}
     {% endif %}
-        <div>hello world</div>
-    {{ year }}
 {% endblock %}

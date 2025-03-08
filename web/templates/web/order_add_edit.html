@@ -1,0 +1,9 @@
+{% extends 'web/base.html' %}
+{% block content %}
+  <h2>Добавить/изменить заказ</h2>
+      <form action="" method="post">
+          {% csrf_token %}
+          {{ form.as_p }}
+            <button>{% if is_edit %}Изменить{% else %}Добавить{% endif%}</button>
+      </form>
+{% endblock %}

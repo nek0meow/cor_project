@@ -16,9 +16,12 @@ class Category(models.Model):
 
 class Product(models.Model):
     product_name = models.CharField(max_length=256)
-    product_desc = models.CharField(max_length=256)
+    product_desc = models.CharField(max_length=256, null=True)
     product_price = models.FloatField()
-    category = models.ForeignKey(Category, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.product_name
 
 
 class Shipment(models.Model):
