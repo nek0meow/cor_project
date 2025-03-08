@@ -50,3 +50,7 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ("product_name", "product_desc", "product_price") #, "category")
+
+
+class CustomerFilterForm(forms.Form):
+    search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Поиск"}), required=False)

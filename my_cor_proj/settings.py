@@ -47,6 +47,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'my_cor_proj.debug.SqlPrintingMiddleware'
 ]
 
 ROOT_URLCONF = 'my_cor_proj.urls'

@@ -1,6 +1,15 @@
 {% extends 'web/base.html' %}
 {% block content %}
     {% if not user.is_anonymous %}
+        <form action="">
+            <b>Фильтры</b><br>
+
+            {% for field in filter_form %}
+                {{ field }}
+            {% endfor %}
+        </form>
+        Записей найдено: {{ count }}.
+
         {% for customer in customers %}
             <p><b>{{customer.customer_name}}</b> <small>{{customer.customer_email}}, {{customer.customer_phone}}, {{customer.customer_address}}</small>
                 <a href="{% url 'customer_orders' customer.id %}">Заказы</a>
@@ -9,4 +18,19 @@
             </p>
         {% endfor %}
     {% endif %}
+
+    <nav>
+        {% if customers.has_previous %}
+            <a href="?page=1"><<</a>
+            <a href="?page={{ customers.previous_page_number }}"><</a>
+        {% endif %}
+
+        Страница {{ customers.number }} из {{ customers.paginator.num_pages }}
+
+        {% if customers.has_next %}
+            <a href="?page={{ customers.next_page_number }}">></a>
+            <a href="?page={{ customers.paginator.num_pages }}">>></a>
+        {% endif %}
+    </nav>
+
 {% endblock %}
