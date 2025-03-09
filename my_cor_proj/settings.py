@@ -9,6 +9,7 @@ https://docs.djangoproject.com/en/5.1/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -36,7 +37,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'rest_framework.authtoken',
     'web',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -47,7 +51,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'my_cor_proj.debug.SqlPrintingMiddleware'
+    'my_cor_proj.middlewares.SqlPrintingMiddleware',
+    'my_cor_proj.middlewares.StatMiddleware'
 ]
 
 ROOT_URLCONF = 'my_cor_proj.urls'
@@ -77,11 +82,25 @@ WSGI_APPLICATION = 'my_cor_proj.wsgi.application'
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "cor_proj",
-        "USER": "cor_proj",
-        "PASSWORD": "cor_proj",
-        "HOST": "localhost",
+        "NAME": os.environ.get("DB_NAME", "cor_proj"),
+        "USER": os.environ.get("DB_USER","cor_proj"),
+        "PASSWORD": os.environ.get("DB_PASSWORD", "cor_proj"),
+        "HOST": os.environ.get("DB_HOST", "localhost"),
         "PORT": 1111
+    }
+}
+
+REDIS_HOST = os.environ.get("REDIS_HOST", "127.0.0.1")
+REDIS_DB = os.environ.get("REDIS_DB", 0)
+REDIS_PORT = 6379
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": f'redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}',
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
     }
 }
 
@@ -126,3 +145,11 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+}

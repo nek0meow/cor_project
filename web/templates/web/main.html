@@ -7,6 +7,9 @@
             {% for field in filter_form %}
                 {{ field }}
             {% endfor %}
+            <button name="export" value="csv">Экпорт в CSV (только покупатели, без заказов)</button>
+
+            <a href="?">Показать всё</a>
         </form>
         Записей найдено: {{ count }}.
 

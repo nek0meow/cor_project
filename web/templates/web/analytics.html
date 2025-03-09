@@ -1,10 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'web/base.html' %}
+{% block content %}
+  <h2>Аналитика</h2>
+    <p>Всего покупателей: <b>{{ customer_stat.id__count }}</b></p>
+    <p>Всего заказов: <b>{{ order_stat.id__count }}</b></p>
+    <p>Уникальных продуктов: <b>{{ product_stat.id__count }}</b></p>
+    <p>Дата самого старого заказа: <b>{{ order_stat.order_date__min }}</b></p>
+    <p>Дата самого позднего заказа: <b>{{ order_stat.order_date__max }}</b></p>
+    <p>Статистика по дням:</p>
+    <ul>
+        {% for day in days_stat %}
+            <li>
+                <b>{{ day.date }}</b>: {{ day.id__count }} заказов.
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

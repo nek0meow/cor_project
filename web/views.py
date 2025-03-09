@@ -1,8 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count, Min, Max
+from django.db.models.functions import TruncDate
+from django.http import HttpResponse
 from django.urls import reverse
+from django.views.decorators.cache import cache_page
 
+from my_cor_proj.redis import get_redis_client
 from web.models import User, Customer, Orders, Product, OrderItem
 from datetime import datetime
 
@@ -10,24 +14,32 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import get_user_model, authenticate, login, logout
 
 from web.forms import RegistrationForm, AuthForm, CustomerForm, OrderForm, OrderItemForm, ProductForm, \
-    CustomerFilterForm
+    CustomerFilterForm, ImportForm
+from web.services import filter_customers, export_customers_csv, import_customers_from_csv
 
 User = get_user_model()
 
+
+@cache_page(10)
 @login_required
 def main_view(request):
     customers = Customer.objects.all()
 
     filter_form = CustomerFilterForm(request.GET)
     filter_form.is_valid()
-    filters = filter_form.cleaned_data
+    customers = filter_customers(customers, filter_form.cleaned_data)
 
-    if filters['search']:
-        customers = customers.filter(customer_name__icontains=filters['search'])
     count = customers.count()
 
     paginator = Paginator(customers, per_page=15)
     page_i = request.GET.get("page", 1)
+
+    if request.GET.get('export') == 'csv':
+        response = HttpResponse(
+            content_type='text/csv',
+            headers={"Content-Disposition": 'attachment; filename=customers.csv;'}
+        )
+        return export_customers_csv(customers, response)
 
     return render(request, 'web/main.html',
                   { "customers": paginator.get_page(page_i),
@@ -51,6 +63,15 @@ def registration_view(request):
     return render(request, 'web/registration.html',
                   { 'form': form, 'is_success': is_success })
 
+def import_view(request):
+    if request.method == "POST":
+        form = ImportForm(files=request.FILES)
+        if form.is_valid():
+            import_customers_from_csv(form.cleaned_data['file'])
+            return redirect('main')
+
+    return render(request, 'web/import.html',
+                  {"form": ImportForm()})
 
 def auth_view(request):
     form = AuthForm()
@@ -97,6 +118,7 @@ def customer_delete_view(request, id):
     return redirect("main")
 
 
+@cache_page(15)
 @login_required
 def customer_orders_view(request, id):
     customer = get_object_or_404(Customer, id=id)
@@ -113,8 +135,6 @@ def customer_orders_view(request, id):
         orders_with_products.append({
             'order': order,
             'products': order_items })
-
-
 
     paginator = Paginator(orders_with_products, per_page=10)
     page_i = request.GET.get("page", 1)
@@ -189,3 +209,37 @@ def product_delete_view(request, id):
     product = get_object_or_404(Product, id=id)
     product.delete()
     return redirect('product_list')  # Redirect to the product list page after deletion
+
+
+@login_required
+def analytics_view(request):
+    customer_stat = Customer.objects.aggregate(
+        Count("id")
+    )
+    order_stat = Orders.objects.aggregate(
+        Count("id"),
+        Min("order_date"),
+        Max("order_date")
+    )
+    product_stat = Product.objects.aggregate(
+        Count("id")
+    )
+    days_stat = (Orders.objects.all()
+                 .annotate(date=TruncDate("order_date"))
+                 .values("date")
+                 .annotate(Count("id"))
+                 .order_by("-date")
+    )
+
+    return render(request, 'web/analytics.html',
+                  {"customer_stat": customer_stat,
+                   "order_stat": order_stat,
+                   "product_stat": product_stat,
+                   "days_stat": days_stat})
+
+
+def stat_view(request):
+    redis = get_redis_client()
+    keys = redis.keys("stat_*")
+    results = [(key.decode().replace("stat_", ""), redis.get(key).decode()) for key in keys]
+    return render(request, 'web/stat.html', { "results": results })

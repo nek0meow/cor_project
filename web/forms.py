@@ -54,3 +54,7 @@ class ProductForm(forms.ModelForm):
 
 class CustomerFilterForm(forms.Form):
     search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Поиск"}), required=False)
+
+
+class ImportForm(forms.Form):
+    file = forms.FileField()
