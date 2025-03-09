@@ -1,9 +1,8 @@
-from django.contrib import admin
-from django.urls import path, include
+from django.urls import path
 from rest_framework.authtoken.views import obtain_auth_token
 from rest_framework.routers import SimpleRouter
 
-from api.views import main_view, customer_view, CustomerModelViewSet, OrderViewSet, ProductViewSet
+from api.views import main_view, CustomerModelViewSet, OrderViewSet, ProductViewSet
 
 router = SimpleRouter()
 router.register("customers", CustomerModelViewSet, basename="customers")

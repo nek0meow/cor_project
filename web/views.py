@@ -1,20 +1,16 @@
+from django.contrib.auth import get_user_model, authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Prefetch, Count, Min, Max
 from django.db.models.functions import TruncDate
 from django.http import HttpResponse
-from django.urls import reverse
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.cache import cache_page
 
 from my_cor_proj.redis import get_redis_client
-from web.models import User, Customer, Orders, Product, OrderItem
-from datetime import datetime
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth import get_user_model, authenticate, login, logout
-
 from web.forms import RegistrationForm, AuthForm, CustomerForm, OrderForm, OrderItemForm, ProductForm, \
     CustomerFilterForm, ImportForm
+from web.models import User, Customer, Orders, Product, OrderItem
 from web.services import filter_customers, export_customers_csv, import_customers_from_csv
 
 User = get_user_model()
@@ -42,9 +38,10 @@ def main_view(request):
         return export_customers_csv(customers, response)
 
     return render(request, 'web/main.html',
-                  { "customers": paginator.get_page(page_i),
-                    "filter_form": filter_form,
-                    "count": count})
+                  {"customers": paginator.get_page(page_i),
+                   "filter_form": filter_form,
+                   "count": count})
+
 
 def registration_view(request):
     form = RegistrationForm()
@@ -61,7 +58,8 @@ def registration_view(request):
             print(form.cleaned_data)
 
     return render(request, 'web/registration.html',
-                  { 'form': form, 'is_success': is_success })
+                  {'form': form, 'is_success': is_success})
+
 
 def import_view(request):
     if request.method == "POST":
@@ -72,6 +70,7 @@ def import_view(request):
 
     return render(request, 'web/import.html',
                   {"form": ImportForm()})
+
 
 def auth_view(request):
     form = AuthForm()
@@ -85,7 +84,7 @@ def auth_view(request):
                 login(request, user)
                 return redirect("main")
     return render(request, 'web/auth.html',
-                  { 'form': form} )
+                  {'form': form})
 
 
 @login_required
@@ -134,14 +133,14 @@ def customer_orders_view(request, id):
         order_items = order.orderitem_set.all()
         orders_with_products.append({
             'order': order,
-            'products': order_items })
+            'products': order_items})
 
     paginator = Paginator(orders_with_products, per_page=10)
     page_i = request.GET.get("page", 1)
 
     return render(request, "web/customer_orders.html",
                   {"customer": customer,
-                         "orders_with_products": paginator.get_page(page_i)})
+                   "orders_with_products": paginator.get_page(page_i)})
 
 
 @login_required
@@ -178,7 +177,7 @@ def order_item_add_view(request, order_id):
         form = OrderItemForm(data=request.POST)
         if form.is_valid():
             order_item = form.save(commit=False)
-            order_item.orders = order   # the reason we cannot replace that function with _add_edit_temp
+            order_item.orders = order  # the reason we cannot replace that function with _add_edit_temp
             order_item.save()
             return redirect('customer_orders', id=order.customer.id)
     return render(request, 'web/order_item_add.html', {'form': form, 'order': order})
@@ -203,6 +202,7 @@ def product_add_edit_view(request, id=None):
             return redirect('product_list')  # Redirect to the product list page
 
     return render(request, 'web/product_add_edit.html', {'form': form, 'is_edit': is_edit})
+
 
 @login_required
 def product_delete_view(request, id):
@@ -229,7 +229,7 @@ def analytics_view(request):
                  .values("date")
                  .annotate(Count("id"))
                  .order_by("-date")
-    )
+                 )
 
     return render(request, 'web/analytics.html',
                   {"customer_stat": customer_stat,
@@ -242,4 +242,4 @@ def stat_view(request):
     redis = get_redis_client()
     keys = redis.keys("stat_*")
     results = [(key.decode().replace("stat_", ""), redis.get(key).decode()) for key in keys]
-    return render(request, 'web/stat.html', { "results": results })
+    return render(request, 'web/stat.html', {"results": results})

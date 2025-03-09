@@ -14,5 +14,6 @@ class OrdersAdmin(admin.ModelAdmin):
     search_fields = ("id", "order_date")
     ordering = ("-order_date",)
 
+
 admin.site.register(Customer, CustomerAdmin)
 admin.site.register(Orders, OrdersAdmin)

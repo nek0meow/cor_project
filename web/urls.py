@@ -1,4 +1,3 @@
-from django.contrib import admin
 from django.urls import path
 
 from web.views import main_view, registration_view, auth_view, logout_view, customer_add_edit_view, \

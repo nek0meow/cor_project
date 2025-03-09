@@ -1,8 +1,10 @@
+import random
+
 from django.core.management import BaseCommand
 from django.utils import timezone
 
 from web.models import Customer, Orders, Product, OrderItem
-import random
+
 
 # Requires already existing products, can make that on the website
 class Command(BaseCommand):
@@ -30,7 +32,6 @@ class Command(BaseCommand):
             selected_products = random.sample(products, num_items)
 
             for product in selected_products:
-
                 order_item = OrderItem(
                     orders=order,
                     product=product,
@@ -39,4 +40,3 @@ class Command(BaseCommand):
                 order_items_to_create.append(order_item)
 
         OrderItem.objects.bulk_create(order_items_to_create)
-

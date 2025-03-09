@@ -3,6 +3,7 @@ from django.db import models
 
 User = get_user_model()
 
+
 class Supplier(models.Model):
     supplier_name = models.CharField(max_length=256, verbose_name="Название")
     supplier_contact = models.CharField(max_length=256, verbose_name="Контактные данные")

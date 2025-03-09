@@ -35,7 +35,7 @@ class CustomerForm(forms.ModelForm):
 class OrderForm(forms.ModelForm):
     class Meta:
         model = Orders
-        fields = ("order_date", )
+        fields = ("order_date",)
         widgets = {
             'order_date': DateInput(attrs={'type': 'date'}),  # Add a date widget
         }
@@ -46,10 +46,11 @@ class OrderItemForm(forms.ModelForm):
         model = OrderItem
         fields = ("quantity", "product")
 
+
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ("product_name", "product_desc", "product_price") #, "category")
+        fields = ("product_name", "product_desc", "product_price")  # , "category")
 
 
 class CustomerFilterForm(forms.Form):
