@@ -15,6 +15,9 @@
             {% else %}
             <a href="{% url 'customer_add' %}">Добавить заказчика</a>
             <a href="{% url 'product_list' %}">Продукты</a>
+            <a href="{% url 'analytics' %}">Аналитика</a>
+            <a href="{% url 'import' %}">Импорт</a>
+            <a href="{% url 'stat' %}">Статистика</a>
             <div style="text-align: right">
                 {% if not user.is_anonymous %}
                     Вы авторизованы как <b>{{ user.username }}</b>
