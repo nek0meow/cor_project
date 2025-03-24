@@ -29,7 +29,6 @@ User = get_user_model()
 
 
 @cache_page(10)
-@login_required
 def main_view(request):
     customers = Customer.objects.all()
 
