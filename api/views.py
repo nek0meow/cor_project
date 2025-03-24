@@ -31,8 +31,7 @@ class CustomerModelViewSet(ModelViewSet):
 
 
 class OrderViewSet(ListModelMixin, GenericViewSet):
-    queryset = Orders.objects.prefetch_related(
-        'order_items__product').all()
+    queryset = Orders.objects.prefetch_related("order_items__product").all()
     serializer_class = OrdersSerializer
 
 

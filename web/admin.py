@@ -4,7 +4,13 @@ from web.models import Customer, Orders
 
 
 class CustomerAdmin(admin.ModelAdmin):
-    list_display = ("id", "customer_name", "customer_email", "customer_phone", "customer_address")
+    list_display = (
+        "id",
+        "customer_name",
+        "customer_email",
+        "customer_phone",
+        "customer_address",
+    )
     search_fields = ("id", "customer_name", "customer_email")
     ordering = ("-id",)
 

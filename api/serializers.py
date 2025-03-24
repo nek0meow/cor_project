@@ -1,6 +1,15 @@
 from rest_framework import serializers
 
-from web.models import Supplier, Category, Product, Shipment, Customer, Orders, OrderItem, Payment
+from web.models import (
+    Supplier,
+    Category,
+    Product,
+    Shipment,
+    Customer,
+    Orders,
+    OrderItem,
+    Payment,
+)
 
 
 class SupplierSerializer(serializers.ModelSerializer):

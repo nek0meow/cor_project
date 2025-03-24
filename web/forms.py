@@ -12,8 +12,8 @@ class RegistrationForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        if cleaned_data['password'] != cleaned_data['password2']:
-            self.add_error('password', 'Пароли не совпадают')
+        if cleaned_data["password"] != cleaned_data["password2"]:
+            self.add_error("password", "Пароли не совпадают")
         return cleaned_data
 
     class Meta:
@@ -29,7 +29,12 @@ class AuthForm(forms.Form):
 class CustomerForm(forms.ModelForm):
     class Meta:
         model = Customer
-        fields = ("customer_name", "customer_email", "customer_phone", "customer_address")
+        fields = (
+            "customer_name",
+            "customer_email",
+            "customer_phone",
+            "customer_address",
+        )
 
 
 class OrderForm(forms.ModelForm):
@@ -37,7 +42,7 @@ class OrderForm(forms.ModelForm):
         model = Orders
         fields = ("order_date",)
         widgets = {
-            'order_date': DateInput(attrs={'type': 'date'}),  # Add a date widget
+            "order_date": DateInput(attrs={"type": "date"}),  # Add a date widget
         }
 
 
@@ -54,7 +59,9 @@ class ProductForm(forms.ModelForm):
 
 
 class CustomerFilterForm(forms.Form):
-    search = forms.CharField(widget=forms.TextInput(attrs={"placeholder": "Поиск"}), required=False)
+    search = forms.CharField(
+        widget=forms.TextInput(attrs={"placeholder": "Поиск"}), required=False
+    )
 
 
 class ImportForm(forms.Form):

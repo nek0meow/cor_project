@@ -19,10 +19,7 @@ class Command(BaseCommand):
         order_items_to_create = []
 
         for order_index in range(30):
-            order = Orders(
-                order_date=timezone.now(),
-                customer=customer
-            )
+            order = Orders(order_date=timezone.now(), customer=customer)
             orders_to_create.append(order)
 
         created_orders = Orders.objects.bulk_create(orders_to_create)
@@ -33,9 +30,7 @@ class Command(BaseCommand):
 
             for product in selected_products:
                 order_item = OrderItem(
-                    orders=order,
-                    product=product,
-                    quantity=random.randint(1, 10)
+                    orders=order, product=product, quantity=random.randint(1, 10)
                 )
                 order_items_to_create.append(order_item)
 
